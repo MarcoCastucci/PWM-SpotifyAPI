@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="main.js"></script>
+    <link rel="stylesheet" href="./style.css">
+    <title>The musica Playlist</title>
+    <style>
+        
+        button {
+            margin: 5px;
+        }
+        
+        .create-playlist-btn {
+            position: fixed; /* Usa fixed per mantenere il pulsante visibile mentre scorri */
+            top: 5%; /* Spazio dal bordo superiore del viewport */
+            right: 5%; /* Spazio dal bordo destro del viewport */
+            background-color: #007bff; /* Colore di sfondo (puoi cambiarlo) */
+            color: white; /* Colore del testo (puoi cambiarlo) */
+            border: none; /* Rimuove il bordo */
+            border-radius: 5px; /* Arrotonda gli angoli */
+            padding: 10px 20px; /* Spazio interno */
+            cursor: pointer; /* Mostra un cursore a mano quando si passa sopra */
+            font-size: 16px; /* Dimensione del testo */
+            z-index: 2; /* Assicura che il pulsante sia sopra altri elementi */
+        }
+
+        .create-playlist-btn:hover {
+            background-color: green; /* Cambia il colore di sfondo al passaggio del mouse */
+        }
+
+        #playlist-section h2 {
+            margin-left: -100px;
+            text-align: center;
+        }
+
+        
+        
+    
+    </style>
+</head>
+<body>
+    
+    <div class="tasto" onclick="toggleMenu(this)">
+        <div class="bar1"></div>
+        <div class="bar2"></div>
+        <div class="bar3"></div>
+    </div>
+  
+    <div id="mySidebar" class="sidebar">
+        <a href="home.html">Home</a>
+        <a href="profilo.html">Profilo</a>
+        <a href="playlist.html">My Playlist</a>
+        <a href="playlistpub.html">All Playlist</a>
+    </div>
+
+
+
+
+    <div id="main">
+        <button class="create-playlist-btn" id="openModalBtn">Crea Playlist</button>
+
+        <div id="playlist-section">
+            <h2>Le mie Playlist!</h2>
+            
+            <div id="playlists-list" class="hidden"></div>
+            
+            <div class="modal" id="myModal">
+                <div class="modal-content">
+                    <button class="btn-close" id="resetModalBtn">&times;</button>
+    
+                    <div class="header-form">
+                        <h1>Crea una Playlist</h1>
+                    </div>
+                    
+                    <div class="containerart">
+                        <h3>Nome della Playlist</h3>
+                        <div class="form-group">
+                            <input type="text" id="playlist-title" maxlength="25" placeholder="Playlist Title">
+                        </div>
+                        <h3>Descrizione della Playlist</h3>
+                        <div class="form-group">
+                            <input type="text" id="playlist-description" maxlength="50" placeholder="Description">
+                        </div>
+                        
+                        <h3>Tags</h3>
+                        <div class="form-group">
+                            <input type="text" id="playlist-tags" maxlength="20" placeholder="Tag1,Tag2,Tag3 (Max 3)">
+                        </div>
+                        
+                        <div class="form-group">
+                            <input type="checkbox" id="playlist-is-public" > <label id="label-playlist-is-public"> Playlist Privata</label><br>
+                        </div>
+                        <button class="confirm-button" id="savePlaylist">Salva Playlist</button>
+                    </div>
+                </div>
+            </div>
+            
+        </div> 
+        <div id="la-playlist-container"></div>
+        <div id="sto-close" class="hidden">
+            <button id="closeButton" >&times;</button>
+        </div>
+        
+        
+    </div>
+
+    <script>
+
+        const modal = document.getElementById("myModal");
+        const openModalBtn = document.getElementById("openModalBtn");
+        const saPlaylist = document.getElementById("savePlaylist");
+        const PlayPublic = document.getElementById('playlist-is-public');
+        const labelPlayPublic = document.getElementById("label-playlist-is-public");
+
+        const closeButton = document.getElementById('closeButton');
+        const container = document.getElementById('la-playlist-container');
+
+        PlayPublic.onclick = function (){
+            if (this.checked){
+                labelPlayPublic.textContent = 'Public Playlist';
+            } else {
+                labelPlayPublic.textContent = 'Private Playlist';
+            }
+        };
+
+        openModalBtn.onclick = function () {
+            modal.style.display = "flex";
+        }
+
+        saPlaylist.onclick = function () {
+            salvaplaylist();
+            modal.style.display = "none";
+        }
+
+        resetModalBtn.onclick = function () {
+            modal.style.display = "none";
+            document.getElementById('playlist-title').value = '';
+            document.getElementById('playlist-description').value = '';
+            document.getElementById('playlist-tags').value = '';
+            document.getElementById('playlist-is-public').checked = false;
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            vediplaylist();  // Chiamata automatica della funzione quando la pagina viene caricata
+        });
+        
+
+        closeButton.onclick = function() {
+            container.style.display = 'none';
+            container.innerHTML = '';
+            const divCloseBotton = document.getElementById('sto-close');
+            divCloseBotton.classList.add('hidden');
+        }
+
+        if (LoggedIn()) {}
+    </script>
+</body>
+</html>

@@ -1,0 +1,141 @@
+
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="./style.css">
+    <script src="main.js" ></script>
+    <title>The musica Registrati</title>
+</head>
+<body>
+    <main>
+        <section class="login">
+            <div class="wrapper">
+                <img src="./img/logo.png" class="login_logo">
+                <h1 class="login_title">Registrati</h1>
+
+                <label class="login_label">
+                  <span>username</span>
+                  <input type="username" id="username" class="input">
+                </label>
+
+                <label class="login_label">
+                  <span>email</span>
+                  <input type="email" id="email" class="input">
+                </label>
+
+                <label class="login_label">
+                  <span>password</span>
+                  <input type="password" id="password" class="input">
+                </label>
+
+                <div class="containersex select-container">
+                    <h1 class="domande">Qual è il tuo sesso?</h1>
+                    <select id="sex" class="select">
+                        <option value="Uomo">Uomo</option>
+                        <option value="Donna">Donna</option>
+                        <option value="Altro">Altro</option>
+                        <option value="Preferisco non specificarlo" selected>Preferisco non specificarlo</option>
+                      </select>
+                </div>
+
+                
+                <div class="containerart">
+                    <h1 class="domande">Scegli massimo 3 artisti che ti piacciono (opzionale).</h1>
+            
+                    <div class="search-bar">
+                        <input type="text" id="search" placeholder="Cerca artisti"  oninput="searchArtists()">
+                    </div>
+            
+                    <div id="artist-grid" class="artist-grid">
+                        <!-- Artisti caricati dinamicamente -->
+                    </div>
+            
+                    <div class="selected-artists hidden" id="selected-artists">
+                        <!-- Artisti selezionati mostrati qui -->
+                    </div>
+            
+                    <div class="error-message" id="error-message">
+                        Puoi selezionare al massimo 3 artisti.
+                    </div>
+            
+                    <button id="confirm-button" class="confirm-button" onclick="confirmSelection()">Conferma Artisti</button>
+                    <button id="edit-button" class="edit-button hidden" onclick="editSelection()">Modifica Artisti</button>
+                </div>
+                <div class="containerart">
+                    <h1 class="domande">Scegli massimo 3 generi che ti piacciono (opzionale).</h1>
+            
+                    <div class="search-bar-gen">
+                        <input type="text" id="search-gen" placeholder="Cerca Generi" oninput="searchGenres()">
+                    </div>
+            
+                    <div id="genre-list" class="genre-list">
+                        <!-- Generi caricati dinamicamente -->
+                    </div>
+            
+                    <div class="selected-genres-gen hidden" id="selected-genres-gen">
+                        <!-- Generi selezionati mostrati qui -->
+                    </div>
+            
+                    <div class="error-message-gen" id="error-message-gen">
+                        Puoi selezionare al massimo 3 generi.
+                    </div>
+            
+                    <button id="confirm-button-gen" class="confirm-button-gen" onclick="confirmGSelection()">Conferma Generi</button>
+                    <button id="edit-button-gen" class="edit-button-gen hidden" onclick="editGSelection()">Modifica Generi</button>
+                </div>
+
+
+            <div class="wrapper">
+                <button type="submit" class="login_button" onclick="newUser()" disabled>
+                    <svg role="img" viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg" aria-label="forward" width="24" height="24">
+                        <path d="M22.8011 14.75L14.2234 6.70971L16.0474 5L26.8695 15.1441C27.3732 15.6163 27.3732 16.3817 26.8695 16.8538L16.0474 26.998L14.2234 25.2883L22.7989 17.25H4.75V14.75H22.8011Z"></path>
+                    </svg>
+                </button>
+
+                <a class="login_link">sei già registrato?</a>
+                <a href="login.html" class="login_link">fai il login qui!</a>
+            </div>
+
+        </section>
+    </main>
+    <script src="main.js"></script>
+    <script>
+        const inputs = document.querySelectorAll(".input");
+        const button = document.querySelector(".login_button");
+        
+
+        const handleFocus = ({ target }) => {
+        const span = target.previousElementSibling;
+        span.classList.add("span-active");
+        };
+
+        const handleFocusOut = ({ target }) => {
+          if (target.value === "") {
+              const span = target.previousElementSibling;
+              span.classList.remove("span-active");
+          }
+        };
+
+        const handleChange = () => {
+            const [email, username, password] = inputs;
+            if (email.value && username.value && password.value.length >= 8) {
+                button.removeAttribute("disabled");
+            } else {
+                button.setAttribute("disabled", "");
+            }
+        };
+
+        inputs.forEach((input) => input.addEventListener("input", handleChange));
+        inputs.forEach((input) => input.addEventListener("focus", handleFocus));
+        inputs.forEach((input) => input.addEventListener("focusout", handleFocusOut));
+    
+    </script>
+</body>
+</html>
+
+
+

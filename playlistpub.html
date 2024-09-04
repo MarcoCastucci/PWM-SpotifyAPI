@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="main.js"></script>
+    <link rel="stylesheet" href="./style.css">
+    <title>The musica PlaylistPub</title>
+    <style>
+        button {
+            margin: 5px;
+        }
+
+        #playlists-list {
+            margin-top: 20px;
+        }
+
+        #songInput {
+            display: inline-block; 
+            width: 400px;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            margin-right: 10px;
+        }
+
+        .inserimenti {
+            transform: translateX(-50px);
+            display: flex;              
+            flex-direction: column;     
+            align-items: center;        
+            justify-content: center;    
+            width: 100%;                 
+        }
+
+    </style>
+</head>
+<body>
+    
+    
+    <div class="tasto" onclick="toggleMenu(this)">
+        <div class="bar1"></div>
+        <div class="bar2"></div>
+        <div class="bar3"></div>
+    </div>
+  
+    <div id="mySidebar" class="sidebar">
+        <a href="home.html">Home</a>
+        <a href="profilo.html">Profilo</a>
+        <a href="playlist.html">My Playlist</a>
+        <a href="playlistpub.html">All Playlist</a>
+    </div>
+  
+    <div  id="main" >
+        
+        
+        <div class="inserimenti">
+            <h1>All Playlists</h1><br>
+            <input type="text" id="searchInput" placeholder="Nome della traccia...">
+            <input type="text" id="searchArtist" placeholder="Artista...">
+            <button id="searchButton">Cerca Canzone</button>
+            <br>
+            <input type="text" id="tagsInput" placeholder="Cerca playlist con un tag">
+            <div id="songInput" inline-block; width: 400px;>Brano scelto :</div>
+            <button id="ricercaPlaylist">Cerca Playlist</button>
+            <br>
+            
+        </div>
+
+        <div id="searchResults"></div>
+
+        <div>
+            <div id="playlists-lista" class="hidden"></div>
+        </div>
+        <!-- Modal for selecting playlist -->
+        
+        <div id="playlistSelectModal" class="modal hidden">
+            <div class="modal-content">
+                <span class="close">&times;</span>
+                <h2>Select Playlist</h2>
+                <div id="playlistsForSelection"></div>
+            </div>
+        </div>
+    </div>
+    <div id="spotifyPlayer"></div>
+    <div id="la-playlist-container"></div>
+        <div id="sto-close" class="hidden">
+            <button id="closeButton" >&times;</button>
+        </div>
+        
+    <script>
+        let ricTrackId;
+        const closeButton = document.getElementById('closeButton');
+        const container = document.getElementById('la-playlist-container');
+       
+        document.getElementById('searchButton').addEventListener('click', async function() {
+
+            const trackName = document.getElementById('searchInput').value;
+            const artistName = document.getElementById('searchArtist').value;
+            if(playlistsList){
+                playlistsList.innerHTML = '';
+            }
+            const tracks = await searchTracks(trackName, artistName);
+            displayTracksxPlaylist(tracks);
+        });
+        
+        function xRicercaP(trackId, trackName){
+            if(resultsDivx){
+                resultsDivx.innerHTML = '';
+            }
+            ricTrackId = trackId;
+            const song = document.getElementById('songInput');
+            song.textContent = "Brano scelto : " + trackName;  
+        }
+
+        document.getElementById('ricercaPlaylist').addEventListener('click', async function() {
+            if(resultsDivx){
+                resultsDivx.innerHTML = '';
+            }
+            const tags = document.getElementById('tagsInput').value;
+            trovaplaylist(ricTrackId, tags);
+            const song = document.getElementById('songInput');
+            song.textContent = "Brano scelto : ";
+            ricTrackId = undefined;
+            document.getElementById('tagsInput').value = "";
+        });
+
+        // X per chiudere il modal
+        document.querySelector('.close').addEventListener('click', closeModal);
+        window.addEventListener('click', function(event) {
+        const modal = document.getElementById("playlistSelectModal");
+        if (event.target === modal) {
+            modal.style.display = "none";
+        }
+        });
+
+        closeButton.onclick = function() {
+            container.style.display = 'none';
+            container.innerHTML = '';
+            const divCloseBotton = document.getElementById('sto-close');
+            divCloseBotton.classList.add('hidden');
+        }
+        
+        
+        if (LoggedIn()) {
+            vedipubplaylist();
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,75 @@
+
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="./style.css">
+    <script src="main.js" defer></script>
+    <title>The musica Login</title>
+</head>
+<body>
+    <main>
+        <section class="login">
+            <div class="wrapper">
+                <img src="./img/logo.png" class="login_logo">
+                <h1 class="login_title">Login</h1>
+
+                <label class="login_label">
+                  <span>email</span>
+                  <input type="email" id="email" class="input">
+                </label>
+
+                <label class="login_label">
+                  <span>password</span>
+                  <input type="password" id="password" class="input">
+                </label>
+
+            <div class="wrapper">
+                <button type="button" class="login_button" onclick="login()" disabled>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24">
+                        <path d="M11.293 4.707 17.586 11H4v2h13.586l-6.293 6.293 1.414 1.414L21.414 12l-8.707-8.707-1.414 1.414z"/>
+                    </svg>
+                </button>
+
+                <a class="login_link">Non sei ancora registrato?</a>
+                <a href="registrati.html" class="login_link">Registrati qui!</a>
+            </div>
+
+        </section>
+    </main>
+  <script>
+      const inputs = document.querySelectorAll(".input");
+      const button = document.querySelector(".login_button");
+
+      const handleFocus = ({ target }) => {
+        const span = target.previousElementSibling;
+        span.classList.add("span-active");
+      };
+
+      const handleFocusOut = ({ target }) => {
+        if (target.value === "") {
+            const span = target.previousElementSibling;
+            span.classList.remove("span-active");
+        }
+      };
+
+      const handleChange = () => {
+          const [email, password] = inputs;
+          if (email.value && password.value.length >= 8) {
+              button.removeAttribute("disabled");
+          } else {
+              button.setAttribute("disabled", "");
+          }
+      };
+      inputs.forEach((input) => input.addEventListener("input", handleChange));
+      inputs.forEach((input) => input.addEventListener("focus", handleFocus));
+      inputs.forEach((input) => input.addEventListener("focusout", handleFocusOut));
+  </script>
+</body>
+</html>
+
+
+

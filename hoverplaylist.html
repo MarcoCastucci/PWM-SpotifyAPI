@@ -1,0 +1,349 @@
+<!DOCTYPE html>
+<html lang="it">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+  <title>Album</title>
+  <script src="main.js"></script>
+  <link rel="stylesheet" href="./style.css">
+  <style>
+    .container {
+      display: flex;
+      flex-direction: row;
+      height: 100vh;
+      width: 100vw;
+    }
+
+    .left-panel {
+      width: 40%;
+      background-color: #f0f0f0;
+      display: flex; 
+      justify-content: center;
+      align-items: center; 
+      height: 100vh; 
+      position: relative;
+    }
+
+    .compertina {
+        width: 75%;
+        top: 50%;
+        padding: 10px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+
+    }
+
+    .album-title {
+      font-size: 24px;
+      font-weight: bold;
+      margin-bottom: 10px;
+    }
+
+    .playlist-txt {
+      font-size: 18px;
+      color: #666;
+      margin-bottom: 10px;
+    }
+
+    .buttons {
+      display: flex;
+      flex-direction: row;
+      justify-content: space-between;
+      margin-bottom: 20px;
+    }
+
+    .right-panel {
+      width: 60%;
+      background-color: #fff;
+      padding: 20px;
+      position: absolute;
+      top: 0;
+      right: 0;
+      height: 100vh;
+      overflow-y: auto;
+    }
+
+    .song-list {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+
+    .song-list li {
+      padding: 10px;
+      border-bottom: 1px solid #ccc;
+    }
+
+    .song-list li:last-child {
+      border-bottom: none;
+    }
+
+    .flex-row {
+      display: flex;
+      align-items: center; 
+    }
+
+    .playlist-txt {
+      margin-right: 10px; 
+      word-break: break-word;
+      text-align: center;
+    }
+
+    .round-button {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%; 
+        border: none; 
+        align-items: center; 
+        justify-content: center; 
+        background-color: black;
+        color: white; 
+        font-size: 25px;
+        cursor: pointer; 
+        margin: 10px; 
+        }
+
+    .round-button:hover {
+    background-color: #0056b3; 
+    }
+
+    .round-button i {
+    pointer-events: none; 
+    }
+
+  #spotifyPlayer {
+    display: block; 
+    justify-content: initial; 
+    align-items: initial; 
+    position: static; 
+    width: 125%;
+    z-index: 1004;
+  }
+  </style>
+</head>
+
+<body>
+  <div class="container">
+    <div class="left-panel">
+      <div class="compertina"> 
+        <h1 id="playlist-titolo" class="album-title"></h1>
+        <p id="playlist-is" class="playlist-txt"></p>
+        <p id="playlist-tag" class="playlist-txt"></p>
+        
+        <p id="playlist-creatore" class="playlist-txt"></p>
+        <p id="playlist-descrizione" class="playlist-txt"></p>
+        <!-- Contenitore flessibile per visualizzare i due elementi sulla stessa riga -->
+        <div class="flex-row">
+            <p id="playlist-numtracks" class="playlist-txt"></p>
+            <p id="playlist-duration" class="playlist-txt"></p>
+        </div>
+        
+        <div class="buttons">
+            <!-- Pulsante Matita (Modifica) -->
+            <button class="round-button" id="openModalBtn">
+                <i class="bi bi-pencil-fill"></i>
+            </button>
+
+            <!-- Pulsante Cestino (Elimina) -->
+            <button class="round-button" id="delete">
+                <i class="bi bi-trash-fill"></i>
+            </button>
+        </div>
+
+        <div class="buttons">
+            <button class="round-button hidden" id="prev" onclick="previousTrack()">
+                <i class="bi bi-arrow-left-circle-fill"></i> 
+            </button>
+
+            <!-- Pulsante Play/Stop -->
+            <button class="round-button" id="Ascolta-la-playlist" >
+                <i id="play-stop" class="bi bi-play-fill"></i> <!-- Cambia in "fa-pause" quando il brano è in pausa -->
+            </button>
+
+            <button class="round-button hidden" id="next" onclick="nextTrack()">
+                <i class="bi bi-arrow-right-circle-fill"></i>
+            </button>  
+        </div>
+        <div id="spotifyPlayer"></div>
+      </div>
+    </div>
+    <div class="right-panel"> 
+      <ul id = "lista-traccie" class="song-list">
+        <!-- Lista delle canzoni qui -->
+      </ul>
+    </div>
+  </div>
+
+  <div class="modal" id="myModal">
+    <div class="modal-content">
+        <button class="btn-close" id="resetModalBtn">&times;</button>
+
+        <div class="header-form">
+            <h1>Modifica la Playlist</h1>
+        </div>
+        
+        <div class="containerart">
+            <h3>Nome della Playlist</h3>
+            <div class="form-group">
+                <input type="text" id="playlist-title" maxlength="25" placeholder="Playlist Title">
+            </div>
+            <h3>Descrizione della Playlist</h3>
+            <div class="form-group">
+                <input type="text" id="playlist-description" maxlength="50" placeholder="Description">
+            </div>
+            
+            <h3>Tags</h3>
+            <div class="form-group">
+                <input type="text" id="playlist-tags" maxlength="20" placeholder="Tag1,Tag2,Tag3 (Max 3)">
+            </div>
+            
+            <div class="form-group">
+                <input type="checkbox" id="playlist-is-public" > <label id="label-playlist-is-public"> Private Playlist</label><br>
+            </div>
+            <button class="confirm-button" id="updatePlaylist">Salva Modifiche</button>
+        </div>
+    </div>
+</div>
+  <script>
+    
+    function getQueryParams() {
+      const params = {};
+      window.location.search.substring(1).split('&').forEach(param => {
+        const [key, value] = param.split('=');
+        params[key] = decodeURIComponent(value);
+      });
+      return params;
+    }
+    
+    // Recupera l'ID della playlist dalla query string
+    const queryParams = getQueryParams();
+    //alert(`Query Params: ${JSON.stringify(queryParams, null, 2)}`);
+    const playlistId = queryParams.id;
+    //alert(playlistId);
+
+    const modal = document.getElementById("myModal");
+    const openModalBtn = document.getElementById("openModalBtn");
+    const saPlaylist = document.getElementById("updatePlaylist");
+    const PlayPublic = document.getElementById('playlist-is-public');
+    const labelPlayPublic = document.getElementById("label-playlist-is-public");
+
+    //cancella playlsit
+    document.getElementById('delete').addEventListener('click', async function() {
+      const playlistJSON = sessionStorage.getItem("playlist");
+      const playlist = JSON.parse(playlistJSON);
+      deletePlaylist(playlist._id);
+    });
+
+    //ascolta/stop playlsit
+    document.getElementById('Ascolta-la-playlist').addEventListener('click', async function() {
+        const playlistJSON = sessionStorage.getItem("playlist");
+        const playlist = JSON.parse(playlistJSON);
+        playPlaylistTracks(playlist.tracks.join(", "));   
+    });
+
+    
+    PlayPublic.onclick = function (){
+        if (this.checked){
+          labelPlayPublic.textContent = 'Playlist Publica';
+        } else {
+          labelPlayPublic.textContent = 'Playlist Privata';
+        }
+    };
+
+    openModalBtn.onclick = function () {
+        const playlistJSON = sessionStorage.getItem("playlist");
+        const playlist = JSON.parse(playlistJSON);
+
+        modal.style.display = "flex";
+        document.getElementById('playlist-title').value = playlist.title;
+        document.getElementById('playlist-description').value = playlist.description;
+        document.getElementById('playlist-tags').value = playlist.tags.join(', ');
+        document.getElementById('playlist-is-public').checked = playlist.isPublic;
+        if (playlist.isPublic){
+            labelPlayPublic.textContent = 'Playlist Publica';
+        } else {
+            labelPlayPublic.textContent = 'Playlist Privata';
+        }
+    }
+
+    saPlaylist.onclick = function () {
+      const playlistJSON = sessionStorage.getItem("playlist");
+      const playlist = JSON.parse(playlistJSON);
+
+      modificaPlaylist(playlist);
+
+      modal.style.display = "none";
+    }
+
+
+    resetModalBtn.onclick = function () {
+        const playlistJSON = sessionStorage.getItem("playlist");
+        const playlist = JSON.parse(playlistJSON);
+
+        modal.style.display = "none";
+        document.getElementById('playlist-title').value = playlist.title;
+        document.getElementById('playlist-description').value = playlist.description;
+        document.getElementById('playlist-tags').value = playlist.tags.join(', ');
+        document.getElementById('playlist-is-public').checked = playlist.isPublic;
+        if (playlist.isPublic){
+            labelPlayPublic.textContent = 'Playlist Publica';
+        } else {
+            labelPlayPublic.textContent = 'Playlist Privata';
+        }
+    }
+
+    window.onclick = function (event) {
+        if (event.target == modal) {
+            modal.style.display = "none";
+        }
+    }
+    
+
+    document.addEventListener('DOMContentLoaded', async function () {
+    
+      await mostrano(playlistId);
+      // Recupera i dati dell'utente dal sessionStorage
+      const userJSON = sessionStorage.getItem("user");
+      const playlistJSON = sessionStorage.getItem("playlist");
+
+      if (userJSON && playlistJSON) {
+        try {
+          // Parsea il JSON per ottenere un oggetto
+          const user = JSON.parse(userJSON);
+          const playlist = JSON.parse(playlistJSON);
+
+          document.getElementById('playlist-titolo').textContent = playlist.title;
+          document.getElementById('playlist-creatore').textContent = "Creata da: " + playlist.creatorName;
+          document.getElementById('playlist-descrizione').textContent = playlist.description;
+          document.getElementById('playlist-numtracks').textContent = playlist.numberOfTracks + " Tracce  • ";
+          document.getElementById('playlist-duration').textContent = formatDuration(playlist.duration);
+          document.getElementById('playlist-tag').textContent = "Tags: " + playlist.tags.join(', ');
+          document.getElementById('playlist-is').textContent = "Playlist " + (playlist.isPublic ? 'Publica' : 'Privata');
+          const trackList = document.getElementById('lista-traccie');
+          const playtracklistItem = document.createElement('div');
+          playtracklistItem.innerHTML +=`
+              <p class="hidden"><strong>Traccie:</strong> ${TracksofPlaylist(playlist.tracks, playlist._id)}</p>
+              <div id="tracksResults"></div>
+          
+          `;
+          trackList.appendChild(playtracklistItem);
+        } catch (error) {
+          console.error('Errore nel parsing dei dati dell\'utente:', error);
+        }
+      } else {
+      console.error('Nessun dato utente trovato nel sessionStorage.');
+      }
+    });
+
+    if (!playlistId) {
+      alert("Playlist non trovata");
+    }
+
+    if (LoggedIn()) {}
+  </script>
+</body>
+
+</html>

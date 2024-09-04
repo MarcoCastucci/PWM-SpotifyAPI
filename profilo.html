@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="it">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Profilo Utente</title>
+    <script src="main.js"></script>
+    <link rel="stylesheet" href="./style.css">
+    <style>
+
+        .btn-mainp {
+            padding: 15px 30px;
+            font-size: 18px;
+            background-color: grey;
+            color: #fff;
+            border: none;
+            border-radius: 100px;
+            cursor: pointer;
+        }
+
+        .btn-mainp:hover {
+            background-color: #555;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="tasto" onclick="toggleMenu(this)">
+        <div class="bar1"></div>
+        <div class="bar2"></div>
+        <div class="bar3"></div>
+    </div>
+  
+    <div id="mySidebar" class="sidebar">
+        <a href="home.html">Home</a>
+        <a href="profilo.html">Profilo</a>
+        <a href="playlist.html">My Playlist</a>
+        <a href="playlistpub.html">All Playlist</a>
+    </div>
+    <div id="mainp"  >
+
+        <div class="containerart">
+            <div class="profile-header">
+                <img src="https://via.placeholder.com/100" alt="Profile Picture">
+                <h2 id="current-username">current-username</h2>
+            </div>
+
+            <button class="btn-mainp" id="openModalBtn">Modifica informazioni per il login</button>
+
+            <div class="containerart">
+                <h1 class="domande">Scegli massimo 3 artisti che ti piacciono.</h1>
+        
+                <div class="search-bar">
+                    <input type="text" id="search" placeholder="Cerca artisti"  oninput="searchArtists()">
+                </div>
+        
+                <div id="artist-grid" class="artist-grid">
+                    <!-- Artisti caricati dinamicamente -->
+                </div>
+        
+                <div class="selected-artists hidden" id="selected-artists">
+                    <!-- Artisti selezionati mostrati qui -->
+                </div>
+        
+                <div class="error-message" id="error-message">
+                    Puoi selezionare al massimo 3 artisti.
+                </div>
+        
+                <button id="confirm-button" class="confirm-button" onclick="confirmSelection()">Conferma Artisti</button>
+                <button id="edit-button" class="edit-button hidden" onclick="editSelection()">Modifica Artisti</button>
+            </div>
+            <div class="containerart">
+                <h1 class="domande">Scegli massimo 3 generi che ti piacciono.</h1>
+        
+                <div class="search-bar-gen">
+                    <input type="text" id="search-gen" placeholder="Cerca Generi" oninput="searchGenres()">
+                </div>
+        
+                <div id="genre-list" class="genre-list">
+                    <!-- Generi caricati dinamicamente -->
+                </div>
+        
+                <div class="selected-genres-gen hidden" id="selected-genres-gen">
+                    <!-- Generi selezionati mostrati qui -->
+                </div>
+        
+                <div class="error-message-gen" id="error-message-gen">
+                    Puoi selezionare al massimo 3 generi.
+                </div>
+        
+                <button id="confirm-button-gen" class="confirm-button-gen" onclick="confirmGSelection()">Conferma Generi</button>
+                <button id="edit-button-gen" class="edit-button-gen hidden" onclick="editGSelection()">Modifica Generi</button>
+            </div>
+            
+            <button class="btn" onclick="modificauser()">Salva le modifiche del profilo</button>
+            <button class="exit-btn" onclick="logout()">Esci del profilo</button>
+            <button class="delete-btn" onclick="confirmDeletion()">Elimina Account</button>
+            
+        </div>
+
+
+        <div class="modal" id="myModal">
+            <div class="modal-content">
+                <button class="btn-close" id="resetModalBtn">&times;</button>
+
+                <div class="header-form">
+                    <img src="https://via.placeholder.com/100" alt="Profile Picture">
+                    <h2 id="current-username1">current-username</h2>
+                </div>
+
+                <div class="containerart">
+                    <h3>Cambia username</h3>
+                    <div class="form-group">
+                        <input type="text" id="username" name="username" value="current-username">
+                    </div>
+
+                    <h3>Cambia mail</h3>
+                    <div class="form-group">
+                        <input type="email" id="email" name="email" value="current-email">
+                    </div>
+
+                    <h3>Cambia password</h3>
+                    <div class="form-group">
+                        <input type="password" id="Password1" name="new-password" placeholder="Nuova Password" value="">
+                    </div>
+                    <div class="form-group">
+                        <input type="password" id="Password2" name="confirm-password"
+                            placeholder="Conferma Nuova Password" value="">
+                    </div>
+                    <button type="submit" class="btn" id="closeModalBtn">Salva</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div id="main"></div>
+    <script>
+        let originalUsername, originalEmail;
+
+        const modal = document.getElementById("myModal");
+        const openModalBtn = document.getElementById("openModalBtn");
+        const closeModalBtn = document.getElementById("closeModalBtn");
+
+        openModalBtn.onclick = function () {
+            modal.style.display = "flex";
+        }
+
+        closeModalBtn.onclick = function () {
+            modal.style.display = "none";
+        }
+
+        resetModalBtn.onclick = function () {
+            modal.style.display = "none";
+            document.getElementById('username').value = originalUsername;
+            document.getElementById('email').value = originalEmail;
+            document.getElementById('Password1').value = '';
+            document.getElementById('Password2').value = '';
+        }
+
+        window.onclick = function (event) {
+            if (event.target == modal) {
+                modal.style.display = "none";
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            // Recupera i dati dell'utente dal sessionStorage
+            const userJSON = sessionStorage.getItem("user");
+
+            if (userJSON) {
+                try {
+                    // Parsea il JSON per ottenere un oggetto
+                    const user = JSON.parse(userJSON);
+
+                    // Verifica se l'oggetto contiene i dati richiesti
+                    if (user.username && user.email) {
+                        originalUsername = user.username;
+                        originalEmail = user.email;
+                        // Popola i campi del modulo con i dati dell'utente
+                        document.getElementById('username').value = user.username;
+                        document.getElementById('email').value = user.email;
+                        document.getElementById('current-username').textContent = user.username;
+                        document.getElementById('current-username1').textContent = user.username;
+                    } else {
+                        console.error('Dati utente incompleti nel sessionStorage.');
+                    }
+                } catch (error) {
+                    console.error('Errore nel parsing dei dati dell\'utente:', error);
+                }
+                selezionati();
+            } else {
+                console.error('Nessun dato utente trovato nel sessionStorage.');
+            }
+        });
+
+        function confirmDeletion() {
+            const confirmation = confirm("Sei sicuro di voler eliminare il tuo account? Questa azione è irreversibile.");
+            if (confirmation) {
+                alert("L'account sarà eliminato.");
+                addioUser();
+            } else {
+                alert("Eliminazione annullata.");
+            }
+        }
+
+        if (LoggedIn()) {}
+    </script>
+
+</body>
+
+</html>
